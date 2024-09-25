@@ -402,3 +402,6 @@ FodyWeavers.xsd
 
 #Exe
 *.exe
+
+# Ignore the Data directory
+/Data/

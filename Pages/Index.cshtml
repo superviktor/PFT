@@ -4,6 +4,34 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome 21</h1>
-</div>
+<body>
+    <h1>Cat Feeding Tracker</h1>
+    <p>Last Feeding Time: <span id="feedingTime">Loading...</span></p>
+    <button id="feedButton">Feed the Cat</button>
+
+    <script>
+        function fetchLastFeedingTime() {
+            fetch('/api/pft/last')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('feedingTime').innerText = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching feeding time:', error);
+                });
+        }
+        document.getElementById('feedButton').addEventListener('click', function() {
+            fetch('/api/pft/feed', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    fetchLastFeedingTime();
+                })
+                .catch(error => {
+                    console.error('Error feeding the cat:', error);
+                });
+        });
+
+        fetchLastFeedingTime();
+    </script>
+</body>
