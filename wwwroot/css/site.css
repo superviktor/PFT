@@ -20,3 +20,27 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.feed-button {
+  background-color: #4CAF50; /* Green background */
+  border: none; /* No border */
+  color: white; /* White text */
+  padding: 15px 32px; /* Padding for the button */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* No underline */
+  display: inline-block; /* Make it inline-block */
+  font-size: 16px; /* Increase font size */
+  margin: 4px 2px; /* Margins */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 12px; /* Rounded corners */
+  transition: background-color 0.3s, transform 0.2s; /* Transition effects */
+}
+
+.feed-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.feed-button:active {
+  transform: scale(0.95); /* Slightly shrink when clicked */
+}
