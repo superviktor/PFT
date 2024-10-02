@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PFT.Controllers;
@@ -23,16 +24,19 @@ public class PftController : ControllerBase
     [HttpGet("last")]
     public IActionResult GetLastFeedingTime()
     {
-        var lastFeedingTimeStr = System.IO.File.ReadLines(_dataFilePath).LastOrDefault();
+        var allLines = System.IO.File.ReadLines(_dataFilePath);
+        var lastLine = allLines.LastOrDefault();
 
-        if (string.IsNullOrWhiteSpace(lastFeedingTimeStr))
+        if (string.IsNullOrWhiteSpace(lastLine))
             return Ok("The pet hasn't been fed yet!");
 
-        var lastFeedingTimeUtc = DateTime.Parse(lastFeedingTimeStr, null, System.Globalization.DateTimeStyles.RoundtripKind);
-        var kievTime = TimeZoneInfo.ConvertTimeFromUtc(lastFeedingTimeUtc, _kievTimeZone);
-        var formattedTime = kievTime.ToString("dd/M/yyyy HH:mm");
+        var lastMealUtc = DateTime.Parse(lastLine, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+        var lastMealTime = TimeZoneInfo.ConvertTimeFromUtc(lastMealUtc, _kievTimeZone).ToString("dd-MM-yyyy HH:mm");
 
-        return Ok(formattedTime);
+        var todayMeals = allLines.Count(line => DateTime.TryParse(line, CultureInfo.InvariantCulture, out DateTime date) && date.Date == DateTime.UtcNow.Date);
+        var yesterdayMeals = allLines.Count(line => DateTime.TryParse(line, CultureInfo.InvariantCulture, out DateTime date) && date.Date == DateTime.UtcNow.AddDays(-1).Date);
+
+        return Ok(new { lastMealTime, todayMeals, yesterdayMeals });
     }
 
     [HttpPost("feed")]
@@ -41,6 +45,6 @@ public class PftController : ControllerBase
         var utcNow = DateTime.UtcNow;
         System.IO.File.AppendAllText(_dataFilePath, utcNow.ToString("o") + Environment.NewLine);
 
-        return Ok("Feeding time updated!");
+        return Ok();
     }
 }

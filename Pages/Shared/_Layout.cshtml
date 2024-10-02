@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿<!-- Layout.cshtml -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,19 +8,50 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PFT.styles.css" asp-append-version="true" />
+    <style>
+        /* Add mobile-specific styles */
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        .feed-button {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            background-color: #109118;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .feed-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">PFT</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
-                </button>             
+                </button>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -27,8 +59,9 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">          
-        </div>your
+        <div class="container text-center py-3">
+            &copy; 2024 PFT - All rights reserved.
+        </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

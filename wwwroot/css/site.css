@@ -44,3 +44,25 @@ body {
 .feed-button:active {
   transform: scale(0.95); /* Slightly shrink when clicked */
 }
+
+.circle {
+  display: inline-flex; /* Center text inside */
+  justify-content: center;
+  align-items: center;
+  width: 100px; /* Circle diameter */
+  height: 100px; /* Circle diameter */
+  border-radius: 50%; /* Makes it a circle */
+  color: white; /* Text color */
+  font-size: 24px; /* Font size */
+  margin: 10px; /* Margin around circles */
+  border: 2px solid white; /* Optional: border around circle */
+  transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+.circle.green {
+  background-color: #4CAF50; /* Green circle for values <= 3 */
+}
+
+.circle.red {
+  background-color: #f44336; /* Red circle for values > 3 */
+}
