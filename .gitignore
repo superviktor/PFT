@@ -403,5 +403,5 @@ FodyWeavers.xsd
 #Exe
 *.exe
 
-# Ignore the Data directory
-/Data/
+# Ignore the vscode
+*.vscode

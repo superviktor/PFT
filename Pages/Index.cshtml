@@ -1,8 +1,5 @@
 ﻿@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
 
 <body>
     <h1>Last Feeding Time: <span id="feedingTime">Loading...</span></h1>
@@ -27,7 +24,7 @@
                     fetchLastFeedingTime();
                 })
                 .catch(error => {
-                    console.error('Error feeding the cat:', error);
+                    console.error('Error feeding the pet:', error);
                 });
         });
 

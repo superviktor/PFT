@@ -6,23 +6,24 @@ namespace PFT.Controllers;
 [Route("api/pft")]
 public class PftController : ControllerBase
 {
-    private readonly string _filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "feed-log.txt");
+    private static readonly string _dataDirectoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "data");
+    private static readonly string _dataFilePath = Path.Combine(_dataDirectoryPath, "feed-log.txt");
+
     private readonly TimeZoneInfo _kievTimeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
 
     public PftController()
     {
-        var directoryPath = Path.GetDirectoryName(_filePath);
-        if (!Directory.Exists(directoryPath))
-            Directory.CreateDirectory(directoryPath!);
+        if (!Directory.Exists(_dataDirectoryPath))
+            Directory.CreateDirectory(_dataDirectoryPath);
 
-        if (!System.IO.File.Exists(_filePath))
-            System.IO.File.Create(_filePath).Dispose();
+        if (!System.IO.File.Exists(_dataFilePath))
+            System.IO.File.Create(_dataFilePath).Dispose();
     }
 
     [HttpGet("last")]
     public IActionResult GetLastFeedingTime()
     {
-        var lastFeedingTimeStr = System.IO.File.ReadLines(_filePath).LastOrDefault();
+        var lastFeedingTimeStr = System.IO.File.ReadLines(_dataFilePath).LastOrDefault();
 
         if (string.IsNullOrWhiteSpace(lastFeedingTimeStr))
             return Ok("The pet hasn't been fed yet!");
@@ -38,7 +39,8 @@ public class PftController : ControllerBase
     public IActionResult Feed()
     {
         var utcNow = DateTime.UtcNow;
-        System.IO.File.AppendAllText(_filePath, utcNow.ToString("o") + Environment.NewLine);
+        System.IO.File.AppendAllText(_dataFilePath, utcNow.ToString("o") + Environment.NewLine);
+
         return Ok("Feeding time updated!");
     }
 }
