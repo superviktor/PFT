@@ -31,7 +31,7 @@ public class PftController : ControllerBase
             return Ok("The pet hasn't been fed yet!");
 
         var lastMealUtc = DateTime.Parse(lastLine, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-        var lastMealTime = TimeZoneInfo.ConvertTimeFromUtc(lastMealUtc, _kievTimeZone).ToString("dd-MM-yyyy HH:mm");
+        var lastMealTime = TimeZoneInfo.ConvertTimeFromUtc(lastMealUtc, _kievTimeZone).ToString("d MMM HH:mm");
 
         var todayMeals = allLines.Count(line => DateTime.TryParse(line, CultureInfo.InvariantCulture, out DateTime date) && date.Date == DateTime.UtcNow.Date);
         var yesterdayMeals = allLines.Count(line => DateTime.TryParse(line, CultureInfo.InvariantCulture, out DateTime date) && date.Date == DateTime.UtcNow.AddDays(-1).Date);
