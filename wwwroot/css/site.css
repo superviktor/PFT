@@ -66,3 +66,21 @@ body {
 .circle.red {
   background-color: #f44336; /* Red circle for values > 3 */
 }
+
+.popup {
+  display: none; /* Initially hidden */
+  position: absolute; /* Position relative to parent */
+  background-color: #4CAF50; /* Semi-transparent background */
+  color: white; /* Text color */
+  padding: 10px; /* Padding */
+  border-radius: 5px; /* Rounded corners */
+  z-index: 1000; /* Make sure it appears above other elements */
+}
+
+.popup.green {
+  background-color: #4CAF50; /* Green circle for values <= 3 */
+}
+
+.popup.red {
+  background-color: #f44336; /* Red circle for values > 3 */
+}

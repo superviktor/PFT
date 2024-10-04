@@ -6,8 +6,10 @@
     <h2 id="lastMealTime">Loading...</h2>
     <h1>Today Meals:</h1>
     <h2 class="circle" id="todayMeals">Loading...</h2>
+    <div id="todayMealsPopup" class="popup"></div>
     <h1>Yesterday Meals:</h1>
     <h2 class="circle" id="yesterdayMeals">Loading...</h2>
+    <div id="yesterdayMealsPopup" class="popup"></div>
     <button id="feedButton" class="feed-button">Feed the pet</button>
 </div>
 
@@ -23,14 +25,22 @@
             });
     }
 
+    function toTime(dateTime, options) {
+        let date = new Date(dateTime);
+        let formattedDate = date.toLocaleString('en-US', options);
+
+        return formattedDate;
+    }
+
     function updateMeals(data) {
-        document.getElementById('lastMealTime').innerText = data.lastMealTime;
+        let options = { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false };
+        document.getElementById('lastMealTime').innerText = toTime(data.lastMealTime, options);
 
         const todayMealsElement = document.getElementById('todayMeals');
         const yesterdayMealsElement = document.getElementById('yesterdayMeals');
 
-        todayMealsElement.innerText =  data.todayMeals;
-        todayMealsElement.className = 'circle ' + ( data.todayMeals <= 3 ? 'green' : 'red');
+        todayMealsElement.innerText = data.todayMeals;
+        todayMealsElement.className = 'circle ' + (data.todayMeals <= 3 ? 'green' : 'red');
 
         yesterdayMealsElement.innerText = data.yesterdayMeals;
         yesterdayMealsElement.className = 'circle ' + (data.yesterdayMeals <= 3 ? 'green' : 'red');
@@ -44,6 +54,68 @@
             })
             .catch(error => {
                 console.error('Error feeding the pet:', error);
+            });
+    });
+
+    function displayMeals(popup, data) {
+        popup.innerHTML = "";
+
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(mealTime => {
+                const mealItem = document.createElement("div");
+                let options = { hour: '2-digit', minute: '2-digit', hour12: false };
+                mealItem.textContent = toTime(mealTime, options);
+                popup.appendChild(mealItem);
+            });
+        } else {
+            popup.textContent = "No meals found.";
+        }
+    }
+
+    function showPopup(popup, element) {
+        const rect = element.getBoundingClientRect();
+        popup.style.left = `${rect.right + 10}px`;
+        popup.style.top = `${rect.top}px`;
+        popup.style.display = "block";
+
+        setTimeout(() => {
+            popup.style.display = "none";
+        }, 3000);
+    }
+
+    document.getElementById("todayMeals").addEventListener("click", function () {
+        const currentDateTime = new Date().toISOString();
+
+        fetch(`api/pft/meals?date=${encodeURIComponent(currentDateTime)}`)
+            .then(response => response.json())
+            .then(data => {
+                const popup = document.getElementById("todayMealsPopup");
+                displayMeals(popup, data);
+                showPopup(popup, this);
+
+                popup.className = 'popup ' + (this.innerText <= 3 ? 'green' : 'red');
+            })
+            .catch(error => {
+                console.error("Error fetching meals:", error);
+            });
+    });
+
+    document.getElementById("yesterdayMeals").addEventListener("click", function () {
+        const yesterday = new Date();
+        yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+        const yesterdayDateTime = yesterday.toISOString();
+
+        fetch(`api/pft/meals?date=${encodeURIComponent(yesterdayDateTime)}`)
+            .then(response => response.json())
+            .then(data => {
+                const popup = document.getElementById("yesterdayMealsPopup");
+                displayMeals(popup, data);
+                showPopup(popup, this);
+
+                popup.className = 'popup ' + (this.innerText <= 3 ? 'green' : 'red');
+            })
+            .catch(error => {
+                console.error("Error fetching meals:", error);
             });
     });
 

@@ -1,4 +1,4 @@
-using System.Globalization;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PFT.Controllers;
@@ -7,10 +7,9 @@ namespace PFT.Controllers;
 [Route("api/pft")]
 public class PftController : ControllerBase
 {
+    private const string DateFormat = "yyyy-MM-dd";
     private static readonly string _dataDirectoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "data");
     private static readonly string _dataFilePath = Path.Combine(_dataDirectoryPath, "feed-log.txt");
-
-    private readonly TimeZoneInfo _kievTimeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
 
     public PftController()
     {
@@ -25,16 +24,15 @@ public class PftController : ControllerBase
     public IActionResult GetLastFeedingTime()
     {
         var allLines = System.IO.File.ReadLines(_dataFilePath);
-        var lastLine = allLines.LastOrDefault();
+        var lastMealTime = allLines.LastOrDefault();
 
-        if (string.IsNullOrWhiteSpace(lastLine))
+        if (string.IsNullOrWhiteSpace(lastMealTime))
             return Ok("The pet hasn't been fed yet!");
 
-        var lastMealUtc = DateTime.Parse(lastLine, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-        var lastMealTime = TimeZoneInfo.ConvertTimeFromUtc(lastMealUtc, _kievTimeZone).ToString("d MMM HH:mm");
-
-        var todayMeals = allLines.Count(line => DateTime.TryParse(line, CultureInfo.InvariantCulture, out DateTime date) && date.Date == DateTime.UtcNow.Date);
-        var yesterdayMeals = allLines.Count(line => DateTime.TryParse(line, CultureInfo.InvariantCulture, out DateTime date) && date.Date == DateTime.UtcNow.AddDays(-1).Date);
+        var today = DateTime.UtcNow; 
+        var todayMeals = allLines.Count(line => line.StartsWith(today.ToString(DateFormat)));
+        var yesterday = today.AddDays(-1); 
+        var yesterdayMeals = allLines.Count(line => line.StartsWith(yesterday.ToString(DateFormat)));
 
         return Ok(new { lastMealTime, todayMeals, yesterdayMeals });
     }
@@ -46,5 +44,14 @@ public class PftController : ControllerBase
         System.IO.File.AppendAllText(_dataFilePath, utcNow.ToString("o") + Environment.NewLine);
 
         return Ok();
+    }
+
+    [HttpGet("meals")]
+    public IActionResult GetMealsTime([Required] DateTime date)
+    {
+        var allLines = System.IO.File.ReadLines(_dataFilePath);
+        var meals = allLines.Where(line => line.StartsWith(date.ToString(DateFormat)));
+
+        return Ok(meals);
     }
 }
